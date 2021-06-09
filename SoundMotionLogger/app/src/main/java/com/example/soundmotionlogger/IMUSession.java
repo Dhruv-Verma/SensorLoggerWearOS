@@ -32,8 +32,6 @@ public class IMUSession implements SensorEventListener {
     private AtomicBoolean mIsRecording = new AtomicBoolean(false);
     private AtomicBoolean mIsWritingFile = new AtomicBoolean(false);
 
-    private float[] mAcceMeasure = new float[3];
-    private float[] mGyroMeasure = new float[3];
     private int samplingRateAcce = 0;
     private int samplingRateGyro = 0;
     private long prevTSAcce = 0;
@@ -49,6 +47,11 @@ public class IMUSession implements SensorEventListener {
         // setup and register various sensors
         mSensors.put("acce", mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
         mSensors.put("gyro", mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE));
+        mSensors.put("linacce", mSensorManager.getDefaultSensor((Sensor.TYPE_LINEAR_ACCELERATION)));
+        mSensors.put("magnet", mSensorManager.getDefaultSensor((Sensor.TYPE_MAGNETIC_FIELD)));
+        mSensors.put("rotvec", mSensorManager.getDefaultSensor((Sensor.TYPE_ROTATION_VECTOR)));
+        mSensors.put("press", mSensorManager.getDefaultSensor((Sensor.TYPE_PRESSURE)));
+        mSensors.put("light", mSensorManager.getDefaultSensor((Sensor.TYPE_LIGHT)));
     }
 
     // methods
@@ -76,7 +79,7 @@ public class IMUSession implements SensorEventListener {
                 }
                 mIsWritingFile.set(true);
             } catch (IOException e) {
-                mContext.showToast("Error occurred while creating output IMU files.");
+                mContext.showToast("Error occurred while creating output sensor files.");
                 e.printStackTrace();
             }
         }
@@ -116,29 +119,53 @@ public class IMUSession implements SensorEventListener {
         try {
             switch (eachSensor.getType()) {
                 case Sensor.TYPE_ACCELEROMETER:
-                    mAcceMeasure[0] = sensorEvent.values[0];
-                    mAcceMeasure[1] = sensorEvent.values[1];
-                    mAcceMeasure[2] = sensorEvent.values[2];
                     if (isFileSaved) {
                         mFileStreamer.addRecord(timestamp, "acce", 3, sensorEvent.values);
                     }
-                    samplingRateAcce = (int) (1000000000 / (timestamp - prevTSAcce));
-                    prevTSAcce = timestamp;
-                    if( timestamp % 7 == 0)
-                        Log.e(LOG_TAG, "Acce sampling rate " +  samplingRateAcce);
+//                    samplingRateAcce = (int) (1000000000 / (timestamp - prevTSAcce));
+//                    prevTSAcce = timestamp;
+//                    if( timestamp % 7 == 0)
+//                        Log.e(LOG_TAG, "Acce sampling rate " +  samplingRateAcce);
                     break;
 
                 case Sensor.TYPE_GYROSCOPE:
-                    mGyroMeasure[0] = sensorEvent.values[0];
-                    mGyroMeasure[1] = sensorEvent.values[1];
-                    mGyroMeasure[2] = sensorEvent.values[2];
                     if (isFileSaved) {
                         mFileStreamer.addRecord(timestamp, "gyro", 3, sensorEvent.values);
                     }
-                    samplingRateGyro = (int) (1000000000 / (timestamp - prevTSGyro));
-                    prevTSGyro = timestamp;
-                    if( timestamp % 7 == 0)
-                        Log.e(LOG_TAG, "Gyro sampling rate " +  samplingRateGyro);
+//                    samplingRateGyro = (int) (1000000000 / (timestamp - prevTSGyro));
+//                    prevTSGyro = timestamp;
+//                    if( timestamp % 7 == 0)
+//                        Log.e(LOG_TAG, "Gyro sampling rate " +  samplingRateGyro);
+                    break;
+
+                case Sensor.TYPE_LINEAR_ACCELERATION:
+                    if (isFileSaved) {
+                        mFileStreamer.addRecord(timestamp, "linacce", 3, sensorEvent.values);
+                    }
+                    break;
+
+                case Sensor.TYPE_MAGNETIC_FIELD:
+                    if (isFileSaved) {
+                        mFileStreamer.addRecord(timestamp, "magnet", 3, sensorEvent.values);
+                    }
+                    break;
+
+                case Sensor.TYPE_ROTATION_VECTOR:
+                    if (isFileSaved) {
+                        mFileStreamer.addRecord(timestamp, "rotvec", 4, sensorEvent.values);
+                    }
+                    break;
+
+                case Sensor.TYPE_PRESSURE:
+                    if (isFileSaved) {
+                        mFileStreamer.addRecord(timestamp, "press", 1, sensorEvent.values);
+                    }
+                    break;
+
+                case Sensor.TYPE_LIGHT:
+                    if (isFileSaved) {
+                        mFileStreamer.addRecord(timestamp, "light", 1, sensorEvent.values);
+                    }
                     break;
             }
         } catch (IOException | KeyException e) {
@@ -155,13 +182,5 @@ public class IMUSession implements SensorEventListener {
     // getter and setter
     public boolean isRecording() {
         return mIsRecording.get();
-    }
-
-    public float[] getAcceMeasure() {
-        return mAcceMeasure;
-    }
-
-    public float[] getGyroMeasure() {
-        return mGyroMeasure;
     }
 }
