@@ -102,6 +102,8 @@ public class IMUSession implements SensorEventListener {
         }
 
         unregisterSensors();
+
+        // TODO: get back to the main activity
     }
 
     @Override
@@ -111,6 +113,7 @@ public class IMUSession implements SensorEventListener {
         boolean isFileSaved = (mIsRecording.get() && mIsWritingFile.get());
 
         // update each sensor measurements
+        // NOTE: This is the place to change the timestamp to unix if we want to
         long timestamp = sensorEvent.timestamp;
         Sensor eachSensor = sensorEvent.sensor;
         try {

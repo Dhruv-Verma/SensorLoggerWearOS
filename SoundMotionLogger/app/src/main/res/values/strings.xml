@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">SoundMotionLogger</string>
+<!--    <string name="app_name">SMLDev</string>-->
     <string name="activity_text">Activity:</string>
     <string name="activity_placeholder">Testing</string>
     <string name="timer_placeholder">00:00:00</string>
+
+    <string name="next_button_text">Next Activity</string>
+    <string name="redo_button_text">Redo</string>
+    <string name="end_session_button_text">End Session</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
@@ -10,4 +15,5 @@
     <string name="hello_world">Hello Square World!</string>
     <string name="title_activity_subject_details">SubjectDetailsActivity</string>
     <string name="title_activity_select_action">SelectActionActivity</string>
+    <string name="title_next_activity">NextActivity</string>
 </resources>

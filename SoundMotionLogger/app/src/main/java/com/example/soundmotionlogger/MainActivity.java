@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -156,14 +157,22 @@ public class MainActivity extends WearableActivity {
             // stop interface timer on display
             mInterfaceTimer.cancel();
 
-            // make UI changes
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showToast("Recording stops!");
-                    resetUI();
-                }
-            });
+            showToast("Recording stops!");
+            // show next options
+            // getNextItem(pID, state)
+            Intent intent = new Intent(getApplicationContext(), NextActivity.class);
+            intent.putExtra("SUBJECT_NAME", mSubjectName);
+            startActivity(intent);
+//            int nextItem = 2;
+
+//            // make UI changes
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    showToast("Recording stops!");
+//                    resetUI();
+//                }
+//            });
         }
     }
 

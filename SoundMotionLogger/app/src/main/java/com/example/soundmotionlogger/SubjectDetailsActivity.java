@@ -28,6 +28,7 @@ public class SubjectDetailsActivity extends WearableActivity {
         mButtonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: check for existing user details
                 if(mTextSubjectName.getText().toString().length() != 0){
                     Intent intent = new Intent(v.getContext(), SelectActionActivity.class);
                     intent.putExtra("SUBJECT_NAME", mTextSubjectName.getText().toString());

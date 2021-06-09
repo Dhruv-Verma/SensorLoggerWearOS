@@ -1,5 +1,6 @@
 package com.example.soundmotionlogger;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 
@@ -46,6 +47,17 @@ public class SelectActionActivity extends WearableActivity {
                 "Clapping", "Scratching", "Twisting Jar", "Pouring", "Drinking", "Grating", "Wiping with Rag",
                 "Washing Utensils", "Washing Hands"};
         Arrays.sort(mListActivities);
-        adaptor = new ActivitiesListAdaptor(this, mListActivities);
+        // adaptor = new ActivitiesListAdaptor(this, mListActivities);
+
+        // Choose a random activity and jump straight to data collection
+        // TODO: include the way to randomize the order of activities to perform
+        // TODO: replace this with a getNextItem(pID, state) function
+        int selectedItem = 1;
+
+        Intent intent = new Intent(this, MainActivity.class);
+//        SelectActionActivity contextInstance = (SelectActionActivity) this;
+        intent.putExtra("SUBJECT_NAME", mSubjectName);
+        intent.putExtra("ACTIVITY_NAME", mListActivities[selectedItem]);
+        startActivity(intent);
     }
 }
