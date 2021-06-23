@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.KeyException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -60,7 +61,7 @@ public class FileStreamer {
             writer.append(timeHeader);
             writer.flush();
         }
-        writer.append(String.format("%s,%s,%s,%s\n","timestamp",writerId+"_x",writerId+"_y",writerId+"_z"));
+        writer.append(String.format("%s,%s,%s,%s,%s\n","timestamp",writerId+"_1",writerId+"_2",writerId+"_3",writerId+"_4"));
         return writer;
     }
 
@@ -70,6 +71,27 @@ public class FileStreamer {
 
     public BufferedWriter getFileWriter(final String writerId) {
         return mFileWriters.get(writerId);
+    }
+
+    public void addRecord(final long timestamp, final String writerId, final int numValues, final String[] values) throws IOException, KeyException {
+
+        // execute the block with only one thread
+        synchronized (this) {
+            // get BufferedWriter of 'writerId'
+            BufferedWriter writer = getFileWriter(writerId);
+            if (writer == null) {
+                throw new KeyException("addRecord: " + writerId + " not found.");
+            }
+
+            // record timestamp, and values in text file
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(timestamp);
+            for (int i = 0; i < numValues; ++i) {
+                stringBuilder.append(String.format(Locale.US, ",%s", values[i]));
+            }
+            stringBuilder.append(" \n");
+            writer.write(stringBuilder.toString());
+        }
     }
 
     public void addRecord(final long timestamp, final String writerId, final int numValues, final float[] values) throws IOException, KeyException {

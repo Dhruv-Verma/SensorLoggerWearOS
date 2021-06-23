@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -13,7 +12,6 @@ import android.os.PowerManager;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,13 +34,16 @@ public class MainActivity extends WearableActivity {
     private static final String[] REQUIRED_PERMISSIONS = new String[] {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_FINE_LOCATION
     };
 
     private String mOutputDirectory = null;
     private String mActivityName = null;
     private String mSubjectName = null;
     private IMUSession mIMUSession;
+    private BluetoothSession mBluetoothSession;
+    private LocationSession mLocationSession;
     private Handler mHandler = new Handler();
     private AtomicBoolean mIsRecording = new AtomicBoolean(false);
     private PowerManager.WakeLock mWakeLock;
@@ -77,6 +78,12 @@ public class MainActivity extends WearableActivity {
         // setup sessions
         mIMUSession = new IMUSession(this);
         Log.e(LOG_TAG, "IMU Session initialized" );
+
+        mBluetoothSession = new BluetoothSession(this);
+        Log.e(LOG_TAG, "Bluetooth Session initialized" );
+
+        mLocationSession = new LocationSession(this);
+        Log.e(LOG_TAG, "Location Session initialized" );
 
         // Enables Always-on
         setAmbientEnabled();
@@ -187,6 +194,12 @@ public class MainActivity extends WearableActivity {
             e.printStackTrace();
         }
 
+        // start Bluetooth session
+        mBluetoothSession.startSession(mOutputDirectory, mFileName);
+
+        // start Location session
+        mLocationSession.startSession(mOutputDirectory, mFileName);
+
         mIsRecording.set(true);
     }
 
@@ -201,6 +214,12 @@ public class MainActivity extends WearableActivity {
         } catch (InterruptedException | IOException e){
             e.printStackTrace();
         }
+
+        // stop Bluetooth session
+        mBluetoothSession.stopSession();
+
+        // stop Location session
+        mLocationSession.stopSession();
 
         mIsRecording.set(false);
     }
